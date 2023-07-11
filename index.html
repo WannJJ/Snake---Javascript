@@ -41,14 +41,17 @@
 
 
 
-    var grid = 16;
+    //var grid = 16; // grid size
     // khởi tạo đối tượng rắn là 1 ô vuông
+    const canvas_width = canvas.width;
+    const size = 10;
+    var grid = canvas_width / size;
 
     var snake = {
 
-      x: 160, //vị trí của snake theo hướng x,y
+      x: grid * Math.floor(size / 2 - 2), //vị trí của snake theo hướng x,y
 
-      y: 160,
+      y: grid * Math.floor(size / 2),
 
       dx: grid, //hướng di chuyển theo phương x hoặc y,ở đây khi start game
       //snake sẽ di chuyển theo x direction với value = 16
@@ -138,21 +141,38 @@
         y: snake.y
       });
 
+      // draw the green field
+      for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+          if ((i + j) % 2 == 0) {
+            context.fillStyle = '#1aff1a';
+          } else {
+            context.fillStyle = '#53ff1a';
+          }
 
+          context.fillRect(j * grid, i * grid, grid, grid);
+        }
+      }
 
       // draw apple
       context.fillStyle = 'red';
 
-      context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+      //#context.fillRect(apple.x, apple.y, grid - 1, grid - 1);
+
+      context.beginPath();
+      context.arc(apple.x + Math.floor(grid / 2), apple.y + Math.floor(grid / 2),
+        grid / 2, 0, 2 * Math.PI);
+      context.fill();
 
 
       // draw snake
-
-      context.fillStyle = 'green';
+      head = snake.cells[0];
+      context.fillStyle = '#0066ff';
 
       snake.cells.forEach(function(cell, index) {
-
-        context.fillRect(cell.x, cell.y, grid - 1, grid - 1);
+        if (cell != head) {
+          context.fillRect(cell.x, cell.y, grid, grid);
+        }
 
 
         // snake ate apple
@@ -162,8 +182,8 @@
           snake.maxCells++;
 
 
-          apple.x = getRandomInt(0, 25) * grid;
-          apple.y = getRandomInt(0, 25) * grid;
+          apple.x = getRandomInt(0, size) * grid;
+          apple.y = getRandomInt(0, size) * grid;
 
         }
 
@@ -176,8 +196,8 @@
 
           if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
 
-            snake.x = 160;
-            snake.y = 160;
+            snake.x = grid * Math.floor(size / 2 - 2);
+            snake.y = grid * Math.floor(size / 2);
 
             snake.cells = [];
             snake.maxCells = 4;
@@ -186,14 +206,66 @@
             snake.dy = 0;
 
 
-            apple.x = getRandomInt(0, 25) * grid;
-            apple.y = getRandomInt(0, 25) * grid;
+            apple.x = getRandomInt(0, size) * grid;
+            apple.y = getRandomInt(0, size) * grid;
 
           }
 
         }
 
       });
+      draw_head();
+    }
+
+    function draw_head() {
+      // Draw snake head
+      rotate_angle = (snake.dx > 0) ? 0 :
+        (
+          (snake.dx < 0) ? Math.PI :
+          (
+            (snake.dy > 0) ? 0.5 * Math.PI : 1.5 * Math.PI
+          ));
+      const half_grid = Math.floor(grid / 2);
+      context.translate(head.x + half_grid, head.y + half_grid);
+      context.rotate(rotate_angle);
+
+      context.fillRect(-half_grid, -half_grid, 0.75 * grid, grid);
+      context.beginPath();
+      context.arc(0.25 * grid, 0, grid * 0.5, 1.5 * Math.PI, 0.5 * Math.PI);
+      context.fill();
+
+      context.beginPath();
+      context.arc(-half_grid / 2, half_grid / 2,
+        grid * 0.4, 0, 2 * Math.PI);
+      context.fill();
+      context.beginPath();
+      context.arc(-half_grid / 2, -half_grid / 2,
+        grid * 0.4, 0, 2 * Math.PI);
+      context.fill();
+      //draw eyes
+      context.fillStyle = 'white';
+      context.beginPath();
+      context.arc(-grid * 0.25, grid * 0.25,
+        grid * 0.1, 0, 2 * Math.PI);
+      context.fill();
+      context.beginPath();
+      context.arc(-grid * 0.25, -grid * 0.25,
+        grid * 0.1, 0, 2 * Math.PI);
+      context.fill();
+
+      context.fillStyle = 'black';
+      context.beginPath();
+      context.arc(-grid * 0.27, grid * 0.25,
+        grid * 0.05, 0, 2 * Math.PI);
+      context.fill();
+      context.beginPath();
+      context.arc(-grid * 0.27, -grid * 0.25,
+        grid * 0.05, 0, 2 * Math.PI);
+      context.fill();
+
+      context.rotate(-rotate_angle);
+      context.translate(-head.x - Math.floor(grid / 2), -head.y - Math.floor(grid / 2));
+
 
     }
 
