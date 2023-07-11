@@ -23,6 +23,20 @@
 
     canvas {
       border: 1px solid white;
+      position: absolute;
+    }
+
+    #Score {
+      /* background: #aaaabb; */
+      position: relative;
+      left: 120px;
+      top: -230px;
+      font: 30px Times New Roman;
+      color: #dddddd;
+      text-align: center;
+      line-height: 70px;
+
+      border-radius: 7%;
     }
   </style>
 
@@ -32,12 +46,14 @@
 
   <canvas width="400" height="400" id="game"></canvas>
 
+  <div id="Score">Score<br></div>
+
   <script>
     //Ở đây ta tạo ra bộ khung chứa game
 
     var canvas = document.getElementById('game');
-
     var context = canvas.getContext('2d');
+    var displayScore = document.getElementById("Score");
 
 
 
@@ -140,6 +156,9 @@
         x: snake.x,
         y: snake.y
       });
+
+
+      displayScore.innerHTML = 'Score: ' + snake.cells.length;
 
       // draw the green field
       for (let i = 0; i < size; i++) {
